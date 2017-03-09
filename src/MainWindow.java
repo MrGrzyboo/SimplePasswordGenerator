@@ -19,6 +19,9 @@ public class MainWindow extends JFrame {
 
     private Insets insets = new Insets(2, 2, 2, 2);
 
+    private JLabel labelCheckboxes;
+    private JLabel labelPercentage;
+
     private JLabel labelSymbolsList;
     private SpecialCharsTextField textFieldSymbolList;
 
@@ -35,6 +38,8 @@ public class MainWindow extends JFrame {
     public void createItems() {
 
         prepareLayout();
+
+        addTopLabels();
         addMainOptionsPanel();
         addPossibleSymbolsField();
         addTextFields();
@@ -50,12 +55,27 @@ public class MainWindow extends JFrame {
         panel.setLayout(layout);
     }
 
+    private void addTopLabels() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = insets;
+        gbc.weighty = 0;
+        gbc.gridy = 0; // First row
+
+        labelCheckboxes = new JLabel("Used character:");
+        gbc.gridx = 0;
+        panel.add(labelCheckboxes, gbc);
+
+        labelPercentage = new JLabel("Probabilities:");
+        gbc.gridx = 1;
+        panel.add(labelPercentage, gbc);
+    }
+
     private void addMainOptionsPanel() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = 2;
-        gbc.gridheight = 4;
+        gbc.gridheight = 1;
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         mainOptionsPanel = new MainOptionsPanel();
@@ -65,8 +85,8 @@ public class MainWindow extends JFrame {
     private void addPossibleSymbolsField() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = insets;
-        gbc.weighty = 1;
-        gbc.gridy = 4; // First row
+        gbc.weighty = 0;
+        gbc.gridy = 2; // First row
 
         labelSymbolsList = new JLabel("Symbols available:");
         gbc.gridx = 0;
@@ -85,33 +105,33 @@ public class MainWindow extends JFrame {
     private void addTextFields() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 1;
-        gbc.weighty = 1;
+        gbc.weighty = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         gbc.insets = insets;
 
         JLabel labelPasswordLength = new JLabel("Password length:");
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 3;
         panel.add(labelPasswordLength, gbc);
 
         JLabel labelPasswordsAmount = new JLabel("Passwords amount:");
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 4;
         panel.add(labelPasswordsAmount, gbc);
 
 
         gbc.insets.left = 25;
         gbc.insets.right = 25;
 
-        textFieldPasswordLength = new NumericTextField(8, 1, 32);
+        textFieldPasswordLength = new NumericTextField(8, 1, 64);
         gbc.gridx = 1;
-        gbc.gridy = 5;
+        gbc.gridy = 3;
         panel.add(textFieldPasswordLength, gbc);
 
-        textFieldPasswordsAmount = new NumericTextField(5, 0, 12);
+        textFieldPasswordsAmount = new NumericTextField(5, 0, 25);
         gbc.gridx = 1;
-        gbc.gridy = 6;
+        gbc.gridy = 4;
         panel.add(textFieldPasswordsAmount, gbc);
     }
 
@@ -120,12 +140,12 @@ public class MainWindow extends JFrame {
         gbc.insets = new Insets(2, 20, 2, 20);
         gbc.weightx = 1;
         gbc.weighty = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         gbc.gridwidth = 2;
 
         textAreaDisplay = new JTextArea("The passwords will appear here :)");
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy = 5;
         textAreaDisplay.setPreferredSize(new Dimension(textAreaDisplay.getPreferredSize().width, 200));
         panel.add(textAreaDisplay, gbc);
 
@@ -136,9 +156,9 @@ public class MainWindow extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = insets;
         gbc.weightx = 1;
-        gbc.weighty = 1;
+        gbc.weighty = 0;
         gbc.gridx = 1;
-        gbc.gridy = 8;
+        gbc.gridy = 6;
 
         buttonGeneratePassword = new JButton("Generate");
         panel.add(buttonGeneratePassword, gbc);
@@ -147,62 +167,19 @@ public class MainWindow extends JFrame {
     }
 
     private void generate() {
-        textAreaDisplay.setText("");
+        Generator generator = new Generator(textFieldSymbolList, mainOptionsPanel);
 
         int amountOfPasswords = textFieldPasswordsAmount.getValue();
         int passwordLength = textFieldPasswordLength.getValue();
 
-        ArrayList<Character> possibleCharacters = new ArrayList<>();
-        if(mainOptionsPanel.getCheckBox(CharactersType.LowerCase).isSelected()) {
-            for(char c = 'a'; c <= 'z'; ++c) {
-                int repeat = mainOptionsPanel.getScrollBar(CharactersType.LowerCase).getValue() / ScrollBarItem.MIN_SHIFT;
-                for (int i = 0; i < repeat; ++i)
-                    possibleCharacters.add(c);
-            }
-        }
-
-        if(mainOptionsPanel.getCheckBox(CharactersType.UpperCase).isSelected()) {
-            for(char c = 'A'; c <= 'Z'; ++c) {
-                int repeat = mainOptionsPanel.getScrollBar(CharactersType.UpperCase).getValue() / ScrollBarItem.MIN_SHIFT;
-                for (int i = 0; i < repeat; ++i)
-                    possibleCharacters.add(c);
-            }
-        }
-
-        if(mainOptionsPanel.getCheckBox(CharactersType.Numbers).isSelected()) {
-            for(char c = '0'; c <= '9'; ++c) {
-                int repeat = mainOptionsPanel.getScrollBar(CharactersType.Numbers).getValue() / ScrollBarItem.MIN_SHIFT;
-                for (int i = 0; i < repeat; ++i)
-                    possibleCharacters.add(c);
-            }
-        }
-
-        if(mainOptionsPanel.getCheckBox(CharactersType.Symbols).isSelected()) {
-            String symbols = textFieldSymbolList.getText();
-            for(int id = 0; id < symbols.length(); ++id) {
-                char c = symbols.charAt(id);
-
-                int repeat = mainOptionsPanel.getScrollBar(CharactersType.Symbols).getValue() / ScrollBarItem.MIN_SHIFT;
-                for (int i = 0; i < repeat; ++i)
-                    possibleCharacters.add(c);
-            }
-        }
-
-        Random random = new Random();
-        int size = possibleCharacters.size();
-
-        for(int i = 0; i < amountOfPasswords; ++i) {
-            String text = "";
-            for(int j = 0; j < passwordLength; ++j) {
-                int index = random.nextInt(size);
-                text += possibleCharacters.get(index);
-            }
-            textAreaDisplay.append(text + "\n");
+        textAreaDisplay.setText("");
+        String[] passwords = generator.generate(amountOfPasswords, passwordLength);
+        for(String password : passwords) {
+            textAreaDisplay.append(password + "\n");
         }
     }
 
-
-    /*private void test() {
+     /*private void test() {
         int lower = 0;
         int upper = 0;
         int numbers = 0;

@@ -64,4 +64,29 @@ public class MainOptionsPanel extends JPanel {
         return scrollBars.get(type).box;
     }
 
+    private float getProbability(CharactersType type, int sum) {
+        ScrollBarItem item = scrollBars.get(type);
+        if(item.box.isSelected())
+            return (float)item.bar.getValue() / sum;
+
+        return 0;
+    }
+
+    public float[] getProbabilities() {
+        int sum = 0;
+        for(CharactersType loopType : CharactersType.values()) {
+            ScrollBarItem sumItem = scrollBars.get(loopType);
+            if(sumItem.box.isSelected())
+                sum += sumItem.bar.getValue();
+        }
+
+        float probabilities[] = new float[CharactersType.values().length];
+
+        for(CharactersType type : CharactersType.values()) {
+            probabilities[type.ordinal()] = getProbability(type, sum);
+        }
+
+        return probabilities;
+    }
+
 }
