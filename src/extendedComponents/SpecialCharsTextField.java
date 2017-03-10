@@ -4,9 +4,6 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 
-/**
- * Created by Grzyboo on 2017-03-05.
- */
 public class SpecialCharsTextField extends JTextField {
 
     public SpecialCharsTextField(String text) {
@@ -18,13 +15,6 @@ public class SpecialCharsTextField extends JTextField {
 
     private class Filter extends DocumentFilter {
         private boolean test(String text) {
-            /*try {
-                Integer.parseInt(text);
-                return true;
-            } catch (NumberFormatException e) {
-                return false;
-            }*/
-
             for(int i = 0; i < text.length(); ++i) {
                 char c = text.charAt(i);
 
@@ -37,7 +27,7 @@ public class SpecialCharsTextField extends JTextField {
                 if(c >= '0' && c <= '9')
                     return false;
 
-                for(int j = 0; j < i; ++j) // Duplicate
+                for(int j = 0; j < i; ++j) // Duplicate character
                     if(text.charAt(j) == c)
                         return false;
             }

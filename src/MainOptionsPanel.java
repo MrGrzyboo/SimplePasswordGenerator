@@ -4,17 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.EnumMap;
 
-/**
- * Created by Grzyboo on 2017-03-06.
- */
-public class MainOptionsPanel extends JPanel {
-    public EnumMap<CharactersType, ScrollBarItem> scrollBars;
+class MainOptionsPanel extends JPanel {
+    private EnumMap<CharactersType, ScrollBarItem> scrollBars;
 
     private static final int SUM = 100;
 
-    public MainOptionsPanel() {
+    MainOptionsPanel() {
         setLayout(new GridBagLayout());
-
         scrollBars = new EnumMap<>(CharactersType.class);
 
         addComponents();
@@ -24,12 +20,11 @@ public class MainOptionsPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(2, 2, 2, 2);
         gbc.weighty = 1;
-        gbc.anchor = GridBagConstraints.FIRST_LINE_START; // allign everything to left
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 
         int i = 0;
         for (CharactersType type : CharactersType.values()) {
             ScrollBarItem item = new ScrollBarItem(type.getName());
-
             scrollBars.put(type, item);
 
             int value = Math.round(type.getPercent() * SUM);
@@ -53,26 +48,9 @@ public class MainOptionsPanel extends JPanel {
         }
 
         scrollBars.get(CharactersType.LowerCase).box.setSelected(true);
-
     }
 
-    public JScrollBar getScrollBar(CharactersType type) {
-        return scrollBars.get(type).bar;
-    }
-
-    public JCheckBox getCheckBox(CharactersType type) {
-        return scrollBars.get(type).box;
-    }
-
-    private float getProbability(CharactersType type, int sum) {
-        ScrollBarItem item = scrollBars.get(type);
-        if(item.box.isSelected())
-            return (float)item.bar.getValue() / sum;
-
-        return 0;
-    }
-
-    public float[] getProbabilities() {
+    float[] getProbabilities() {
         int sum = 0;
         for(CharactersType loopType : CharactersType.values()) {
             ScrollBarItem sumItem = scrollBars.get(loopType);
@@ -87,6 +65,14 @@ public class MainOptionsPanel extends JPanel {
         }
 
         return probabilities;
+    }
+
+    private float getProbability(CharactersType type, int sum) {
+        ScrollBarItem item = scrollBars.get(type);
+        if(item.box.isSelected())
+            return (float)item.bar.getValue() / sum;
+
+        return 0;
     }
 
 }

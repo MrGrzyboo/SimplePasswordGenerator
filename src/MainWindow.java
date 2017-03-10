@@ -1,73 +1,52 @@
 import extendedComponents.NumericTextField;
-import extendedComponents.ScrollBarItem;
 import extendedComponents.SpecialCharsTextField;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Random;
 
-
-/**
- * Created by Grzyboo on 2017-03-02.
- */
-public class MainWindow extends JFrame {
-    private GridBagLayout layout;
+class MainWindow extends JFrame {
     private JPanel panel;
-
-    private Insets insets = new Insets(2, 2, 2, 2);
-
-    private JLabel labelCheckboxes;
-    private JLabel labelPercentage;
-
-    private JLabel labelSymbolsList;
-    private SpecialCharsTextField textFieldSymbolList;
-
-    private NumericTextField textFieldPasswordLength;
-    private NumericTextField textFieldPasswordsAmount;
-
-    private JTextArea textAreaDisplay;
-
-    private JButton buttonGeneratePassword;
 
     private MainOptionsPanel mainOptionsPanel;
 
+    private SpecialCharsTextField textFieldSymbolList;
+    private NumericTextField textFieldPasswordLength;
+    private NumericTextField textFieldPasswordsAmount;
+    private JTextArea textAreaDisplay;
 
-    public void createItems() {
+    private Insets standardInsets = new Insets(2, 2, 2, 2);
 
-        prepareLayout();
+    MainWindow() {
+        super();
+        createComponents();
+    }
+
+    private void createComponents() {
+        panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        add(panel);
 
         addTopLabels();
         addMainOptionsPanel();
-        addPossibleSymbolsField();
-        addTextFields();
+        addSymbolsField();
+        addNumericFields();
         addDisplayField();
         addGeneratePasswordButton();
-
-        add(panel);
-    }
-
-    private void prepareLayout() {
-        layout = new GridBagLayout();
-        panel = new JPanel();
-        panel.setLayout(layout);
     }
 
     private void addTopLabels() {
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = insets;
+        gbc.insets = standardInsets;
         gbc.weighty = 0;
-        gbc.gridy = 0; // First row
+        gbc.gridy = 0;
 
-        labelCheckboxes = new JLabel("Used character:");
+        JLabel labelCheckboxes = new JLabel("Used character:");
         gbc.gridx = 0;
         panel.add(labelCheckboxes, gbc);
 
-        labelPercentage = new JLabel("Probabilities:");
+        JLabel labelProbabilities = new JLabel("Probabilities:");
         gbc.gridx = 1;
-        panel.add(labelPercentage, gbc);
+        panel.add(labelProbabilities, gbc);
     }
 
     private void addMainOptionsPanel() {
@@ -82,16 +61,16 @@ public class MainWindow extends JFrame {
         panel.add(mainOptionsPanel, gbc);
     }
 
-    private void addPossibleSymbolsField() {
+    private void addSymbolsField() {
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = insets;
+        gbc.insets = standardInsets;
         gbc.weighty = 0;
-        gbc.gridy = 2; // First row
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.LINE_START;
 
-        labelSymbolsList = new JLabel("Symbols available:");
+        JLabel labelSymbolsList = new JLabel("Symbols available:");
         gbc.gridx = 0;
         gbc.weightx = 0;
-        gbc.anchor = GridBagConstraints.FIRST_LINE_END;
         panel.add(labelSymbolsList, gbc);
 
         textFieldSymbolList = new SpecialCharsTextField("~`!@#$%^&*()_-+=[]{}|\\:;\"'<>?,./");
@@ -102,13 +81,13 @@ public class MainWindow extends JFrame {
         panel.add(textFieldSymbolList, gbc);
     }
 
-    private void addTextFields() {
+    private void addNumericFields() {
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.weightx = 1;
+        gbc.insets = standardInsets;
+        gbc.weightx = 0;
         gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        gbc.insets = insets;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.LINE_START;
 
         JLabel labelPasswordLength = new JLabel("Password length:");
         gbc.gridx = 0;
@@ -121,15 +100,15 @@ public class MainWindow extends JFrame {
         panel.add(labelPasswordsAmount, gbc);
 
 
-        gbc.insets.left = 25;
-        gbc.insets.right = 25;
 
         textFieldPasswordLength = new NumericTextField(8, 1, 64);
+        textFieldPasswordLength.setColumns(2);
         gbc.gridx = 1;
         gbc.gridy = 3;
         panel.add(textFieldPasswordLength, gbc);
 
         textFieldPasswordsAmount = new NumericTextField(5, 0, 25);
+        textFieldPasswordsAmount.setColumns(2);
         gbc.gridx = 1;
         gbc.gridy = 4;
         panel.add(textFieldPasswordsAmount, gbc);
@@ -154,13 +133,13 @@ public class MainWindow extends JFrame {
 
     private void addGeneratePasswordButton() {
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = insets;
+        gbc.insets = standardInsets;
         gbc.weightx = 1;
         gbc.weighty = 0;
         gbc.gridx = 1;
         gbc.gridy = 6;
 
-        buttonGeneratePassword = new JButton("Generate");
+        JButton buttonGeneratePassword = new JButton("Generate");
         panel.add(buttonGeneratePassword, gbc);
 
         buttonGeneratePassword.addActionListener( e -> generate());
@@ -169,17 +148,18 @@ public class MainWindow extends JFrame {
     private void generate() {
         Generator generator = new Generator(textFieldSymbolList, mainOptionsPanel);
 
-        int amountOfPasswords = textFieldPasswordsAmount.getValue();
+        int passwordsAmount = textFieldPasswordsAmount.getValue();
         int passwordLength = textFieldPasswordLength.getValue();
 
         textAreaDisplay.setText("");
-        String[] passwords = generator.generate(amountOfPasswords, passwordLength);
-        for(String password : passwords) {
+
+        String[] passwords = generator.generate(passwordsAmount, passwordLength);
+        for(String password : passwords)
             textAreaDisplay.append(password + "\n");
-        }
     }
 
-     /*private void test() {
+    // Tests if the probabilities are okay.
+    /*private void test() {
         int lower = 0;
         int upper = 0;
         int numbers = 0;

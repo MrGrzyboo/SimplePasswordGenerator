@@ -5,24 +5,21 @@ import javax.swing.text.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-/**
- * Created by Grzyboo on 2017-03-05.
- */
 public class NumericTextField extends JTextField implements FocusListener {
-    private int lowest;
-    private int highest;
+    private int minimum;
+    private int maximum;
 
-    public NumericTextField(int currentValue, int lowest, int highest) {
+    public NumericTextField(int currentValue, int minimum, int maximum) {
         super();
 
-        if(lowest > highest) {
-            int value = lowest;
-            lowest = highest;
-            highest = value;
+        if(minimum > maximum) {
+            int value = minimum;
+            minimum = maximum;
+            maximum = value;
         }
 
-        this.lowest = lowest;
-        this.highest = highest;
+        this.minimum = minimum;
+        this.maximum = maximum;
 
         currentValue = verifyRange(currentValue);
         setText(String.valueOf(currentValue));
@@ -34,10 +31,10 @@ public class NumericTextField extends JTextField implements FocusListener {
     }
 
     private int verifyRange(int value) {
-        if(value < lowest)
-            value = lowest;
-        if(value > highest)
-            value = highest;
+        if(value < minimum)
+            value = minimum;
+        if(value > maximum)
+            value = maximum;
 
         return value;
     }
@@ -46,7 +43,7 @@ public class NumericTextField extends JTextField implements FocusListener {
         try {
             return Integer.parseInt(getText());
         } catch(NumberFormatException e) {
-            return lowest;
+            return minimum;
         }
     }
 
@@ -83,6 +80,6 @@ public class NumericTextField extends JTextField implements FocusListener {
     @Override
     public void focusLost(FocusEvent e) {
         if(getText().length() == 0)
-            setText(String.valueOf(lowest));
+            setText(String.valueOf(minimum));
     }
 }

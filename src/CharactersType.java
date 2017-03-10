@@ -1,7 +1,5 @@
-/**
- * Created by Grzyboo on 2017-03-07.
- */
-public enum CharactersType {
+
+enum CharactersType {
     LowerCase(40, "Lowercase letters"),
     UpperCase(20, "Uppercase letters"),
     Numbers(20, "Numbers"),
