@@ -6,7 +6,5 @@ You can define the probabilities for all of these 4 groups of characters to occu
 
 
 Useful classes:
-
-NumericTextField(only numbers from [min, max])
-
-SpecialCharsTextFields(blocks specific characters)
+  NumericTextField(only numbers from [min, max])
+  SpecialCharsTextFields(blocks specific characters)
